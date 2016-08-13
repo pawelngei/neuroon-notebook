@@ -20,7 +20,8 @@ def correlate_with_time_shift(
         (i + time_shift + window_length) * frequency
       ],
       second_signal[
-        time_shift : (time_shift + window_length) * frequency
+        time_shift * frequency :
+        (time_shift + window_length) * frequency
       ]
     )
     correlation_array[i] = correlation
