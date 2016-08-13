@@ -70,7 +70,10 @@ def plot_spectrum_fragment(
 
 
 def plot_spectrum_fragment(
-  csv_sig, edf_sig, seconds=10, shift=0,
+  csv_sig, edf_sig,
+  seconds=10,
+  shift=0,
+  initial_timestamp=False,
   cap_frequency=False,
   csv_title='NeuroOn signal',
   csv_label='NeuroOn spectrum',
@@ -97,6 +100,10 @@ def plot_spectrum_fragment(
       'color': sns.xkcd_rgb['medium green']
     }
   ]
+  if not initial_timestamp:
+    csv_init_ts = csv_sig.timestamp[0]
+    edf_init_ts = edf_sig.timestamp[0]
+    initial_timestamp = csv_init_ts if csv_init_ts > edf_init_ts else edf_init_ts
   for series in plotting_series:
     pp.subplot(series['subplot'])
     pp.title(series['title'])
@@ -106,8 +113,8 @@ def plot_spectrum_fragment(
       signal['timestamp'] < signal['timestamp'][0] + timedelta(seconds=1)
     ])
     time_slice = np.logical_and(
-      signal['timestamp'] >= signal['timestamp'][0] + timedelta(seconds=shift),
-      signal['timestamp'] < signal['timestamp'][0] + timedelta(seconds=shift + seconds)
+      signal['timestamp'] >= initial_timestamp + timedelta(seconds=shift),
+      signal['timestamp'] < initial_timestamp + timedelta(seconds=shift + seconds)
     )
     signal_len = len(signal[time_slice])
     signal_y = signal[time_slice]['signal']
